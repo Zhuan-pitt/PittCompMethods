@@ -3,7 +3,7 @@
 #include <sstream>
 #include <list>
 #include <complex>
-#include "/Users/lizhuan/Desktop/CM/eigen/Eigen/Dense"
+#include <Eigen/Dense>
 using namespace Eigen;
 typedef std::complex<double> Complex;
 
