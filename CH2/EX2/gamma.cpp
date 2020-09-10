@@ -2,7 +2,7 @@
 #include <math.h>
 
 int main (int argc, char ** argv) { 
-    int arraylength =20;
+    int arraylength =14;
     //Method 1: gamma=1/sqrt(1-beta^2)
     double beta[arraylength];
     double gam1[arraylength];
