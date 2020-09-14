@@ -17,18 +17,8 @@ int main (int argc, char **argv){
     streamV>>V;//Obetain energy and potential
 
     //calculate the wave vectors
-   
-        Complex k1=sqrt(E);
-        Complex k2=0;
-        if (V<=E){
-           Complex k(sqrt(E-V),0);
-           k2=k+k2;
-        }
-        else{
-            Complex k(0,sqrt(V-E));
-            k2=k+k2;
-        }
-        
+    Complex k1=sqrt(E);
+    Complex k2=sqrt(Complex(E-V));
 
     //boudary conditions:
     // Let x =A/C, y = B/C
