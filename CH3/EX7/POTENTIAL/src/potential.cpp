@@ -33,7 +33,7 @@ int main (int argc, char * * argv) {
   } //index of refraction in region II
   double k = 1.0;// k =sqrt(E)
 
-  std::cout<<n2<<std::endl;
+  // std::cout<<n2<<std::endl;
 
   double a=1;
   

@@ -15,9 +15,28 @@
 #include "QatGenericFunctions/Variable.h"
 #include "QatGenericFunctions/Sin.h"
 #include "QatGenericFunctions/Cos.h"
+#include "QatGenericFunctions/CutBase.h"
+#include "QatPlotting/PlotPoint.h"
+
+
 typedef std::complex<double> Complex;
 
+class Window:public Cut<double> {
+public:
 
+  Window(double min, double max):Cut<double>(), min(min), max(max) {};
+
+  virtual bool operator () (const double & x) const {
+    return x>min && x<=max;
+  }
+
+  virtual Window *clone() const {
+    return new Window(*this);
+  }
+private:
+  double min;
+  double max;
+};
 
 double f(double x) {
   return sin((x));
@@ -71,7 +90,7 @@ int main (int argc, char **argv) {
   Complex F=BCDF(3);
   
 
-  std::cout<<BCDF<<std::endl;
+  // std::cout<<BCDF<<std::endl;
 
 
 
@@ -99,8 +118,12 @@ int main (int argc, char **argv) {
 
   // The following code sets the scale for a linear plot:
   PRectF rect;
-  rect.setXmin(-2.0);
-  rect.setXmax( 2.0);
+  double xmin;
+  xmin=-5;
+  double xmax;
+  xmax=5;
+  rect.setXmin(xmin);
+  rect.setXmax(xmax);
   rect.setYmin(-3);
   rect.setYmax( 3);
   
@@ -109,32 +132,34 @@ int main (int argc, char **argv) {
   PlotView view(rect);
   window.setCentralWidget(&view);
   using namespace Genfun;
-  Variable X;
+  Variable X1;
   Cos cos;
   Sin sin;
-  GENFUNCTION FL = 1+2*B.real()*cos(2*k*X)+2*B.imag()*sin(2*k*X)+norm(B);
+
+
+
+  GENFUNCTION FL = 1+2*B.real()*cos(2*k*X1)+2*B.imag()*sin(2*k*X1)+norm(B);
   GENFUNCTION FM = norm(C)+2*(C.real()*D.real()+C.imag()*D.imag())
-                    *cos(2*n*k*X)+2*(C.real()*D.imag()-C.imag()*D.real())
-                    *sin(2*n*k*X)+norm(D);
-  GENFUNCTION FR = norm(F)+X-X;
+                    *cos(2*n*k*X1)+2*(C.real()*D.imag()-C.imag()*D.real())
+                    *sin(2*n*k*X1)+norm(D);
+  GENFUNCTION FR = norm(F)+X1-X1;
 
   // Here we make plots out of our function, first by adapting to an F1D
   // and then by adapting to a PlotFunction1D:
+ const Cut<double> & wl    =Window(xmin,-1);
  
- PlotFunction1D pFL =FL;
- PlotFunction1D pFM =FM;
- PlotFunction1D pFR =FR;
-  {
-    // Set plot properties here: thick, dark red
-    PlotFunction1D::Properties prop;
-    prop.pen.setWidth(3);
-    pFL.setProperties(prop);
-  }
-  
+ const Cut<double> & wr    =Window(1,xmax);
+ const Cut<double> & wm    =!(wl || wr);
+ PlotFunction1D pFL(FL,wl);
+ PlotFunction1D pFM(FM,wm);
+ PlotFunction1D pFR(FR,wr);
+PlotPoint pP(0,0);
   // And we add them to the plotter:
   view.add(&pFL);
   view.add(&pFM);
   view.add(&pFR);
+  view.add(&pP);
+  // view.add(&pFT);
   
   // Give the plot a title:
   PlotStream titleStream(view.titleTextEdit());
@@ -142,9 +167,7 @@ int main (int argc, char **argv) {
 	      << PlotStream::Center() 
 	      << PlotStream::Family("Sans Serif") 
 	      << PlotStream::Size(16)
-	      << "f"
-	      << PlotStream::Normal()
-	      <<"(x)"
+	      << "probability density"
 	      << PlotStream::EndP();
   
   // Label the x-axis
@@ -162,7 +185,7 @@ int main (int argc, char **argv) {
 	       << PlotStream::Center()
 	       << PlotStream::Family("Sans Serif")
 	       << PlotStream::Size(16)
-	       << "f(x)"
+	       << "|\u03A6(x)|^2"
 	       << PlotStream::EndP();
   
   // Show the window and start user interaction:

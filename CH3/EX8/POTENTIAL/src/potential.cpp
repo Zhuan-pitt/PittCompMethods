@@ -19,6 +19,25 @@
 #include "QatGenericFunctions/CutBase.h"
 typedef std::complex<double> Complex;
 
+
+class Window:public Cut<double> {
+public:
+
+  Window(double min, double max):Cut<double>(), min(min), max(max) {};
+
+  virtual bool operator () (const double & x) const {
+    return x>min && x<=max;
+  }
+
+  virtual Window *clone() const {
+    return new Window(*this);
+  }
+private:
+  double min;
+  double max;
+};
+
+
 int main (int argc, char * * argv) {
   double ka;
   std::cout<<"Please input the value of ka"<<std::endl;
@@ -44,7 +63,7 @@ int main (int argc, char * * argv) {
   } //index of refraction in region II
   double k = 1.0;// k =sqrt(E)
 
-  std::cout<<n2<<std::endl;
+  //std::cout<<n2<<std::endl;
 
   double a=ka;
   
@@ -93,9 +112,7 @@ int main (int argc, char * * argv) {
 
 
    Eigen::VectorXcd BCDEFGHJ=A.inverse()*Y;
-//std::cout<<Y<<" \n  "<<A<<"\n "<<BCDEFGHJ<<std::endl;
-  double R = norm(BCDEFGHJ(0));
-  double T = norm(BCDEFGHJ(7));
+
 
 Complex b;
 Complex c;
@@ -139,7 +156,7 @@ j =BCDEFGHJ(7);
 
   // The following code sets the scale for a linear plot:
   PRectF rect;
-  rect.setXmin(-3.0);
+  rect.setXmin(-3);
   rect.setXmax( 3.0);
   rect.setYmin(0);
   rect.setYmax( 5);
@@ -172,30 +189,35 @@ j =BCDEFGHJ(7);
   GENFUNCTION FL = 1+2.*b.real()*cos(2.*k*X1)+2.*b.imag()*sin(2.*k*X1)+norm(b);
   GENFUNCTION FM1 = (c.real()*exp(-k*n1.imag()*X1)+d.real()*exp(k*n1.imag()*X1))*
                     (c.real()*exp(-k*n1.imag()*X1)+d.real()*exp(k*n1.imag()*X1))+
-                    (c.imag()*exp(-k*n1.imag()*X1)+d.real()*exp(k*n1.imag()*X1))*
-                    (c.imag()*exp(-k*n1.imag()*X1)+d.real()*exp(k*n1.imag()*X1));
+                    (c.imag()*exp(-k*n1.imag()*X1)+d.imag()*exp(k*n1.imag()*X1))*
+                    (c.imag()*exp(-k*n1.imag()*X1)+d.imag()*exp(k*n1.imag()*X1));
                     
 GENFUNCTION FM2 = (e.real()*exp(-k*n2.imag()*X1)+f.real()*exp(k*n2.imag()*X1))*
                     (e.real()*exp(-k*n2.imag()*X1)+f.real()*exp(k*n2.imag()*X1))+
-                    (e.imag()*exp(-k*n2.imag()*X1)+f.real()*exp(k*n2.imag()*X1))*
-                    (e.imag()*exp(-k*n2.imag()*X1)+f.real()*exp(k*n2.imag()*X1));
+                    (e.imag()*exp(-k*n2.imag()*X1)+f.imag()*exp(k*n2.imag()*X1))*
+                    (e.imag()*exp(-k*n2.imag()*X1)+f.imag()*exp(k*n2.imag()*X1));
                     
 GENFUNCTION FM3 = (g.real()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1))*
                     (g.real()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1))+
-                    (g.imag()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1))*
-                    (g.imag()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1));
+                    (g.imag()*exp(-k*n1.imag()*X1)+h.imag()*exp(k*n1.imag()*X1))*
+                    (g.imag()*exp(-k*n1.imag()*X1)+h.imag()*exp(k*n1.imag()*X1));
                     
   GENFUNCTION FR = norm(j)+X1-X1;
 
   // Here we make plots out of our function, first by adapting to an F1D
   // and then by adapting to a PlotFunction1D:
+ const Cut<double> & wl    =Window(-3,-2*ka);
+ const Cut<double> & wm1    =Window(-2*ka,-1*ka);
+ const Cut<double> & wm2    =Window(-1*ka,ka);
+ const Cut<double> & wm3    =Window(ka,2*ka);
+ const Cut<double> & wr    =Window(2*ka,3);
  
 
- PlotFunction1D pFL(FL);
- PlotFunction1D pFM1 =FM1;
- PlotFunction1D pFM2 =FM2;
- PlotFunction1D pFM3 =FM3;
- PlotFunction1D pFR =FR;
+ PlotFunction1D pFL(FL,wl);
+ PlotFunction1D pFM1(FM1,wm1);
+ PlotFunction1D pFM2(FM2,wm2);
+ PlotFunction1D pFM3(FM3,wm3);
+ PlotFunction1D pFR(FR,wr);
 //  PlotFunction1D pF =FT;
   // {
   //   // Set plot properties here: thick, dark red
@@ -218,9 +240,7 @@ GENFUNCTION FM3 = (g.real()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1))*
 	      << PlotStream::Center() 
 	      << PlotStream::Family("Sans Serif") 
 	      << PlotStream::Size(16)
-	      << "f"
-	      << PlotStream::Normal()
-	      <<"(x)"
+	      << "probability density"
 	      << PlotStream::EndP();
   
   // Label the x-axis
@@ -238,7 +258,7 @@ GENFUNCTION FM3 = (g.real()*exp(-k*n1.imag()*X1)+h.real()*exp(k*n1.imag()*X1))*
 	       << PlotStream::Center()
 	       << PlotStream::Family("Sans Serif")
 	       << PlotStream::Size(16)
-	       << "|Psi(x)|"
+	       << "|\u03A6(x)|^2"
 	       << PlotStream::EndP();
   
   // Show the window and start user interaction:

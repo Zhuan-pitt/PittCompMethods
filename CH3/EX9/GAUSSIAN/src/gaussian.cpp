@@ -31,7 +31,7 @@ int main (int argc, char **argv) {
   
   double a = 1;
   double k = 1;
-  double V0 = 0.8;
+  double V0 = 1.2;
   double x=-4*a;
   Complex n = sqrt(Complex(1-V0*exp((-x*x)/(2*a*a))));//We set E=1;
   Complex I(0,1.0);
@@ -84,7 +84,7 @@ int main (int argc, char **argv) {
 
   
 
-  R(N-1)=norm(coeff(0));
+  R(N-1)=1-norm(coeff(0));
   // std::cout<<R<<"\n"<<std::endl;
   
   }
