@@ -107,14 +107,14 @@ std::vector<PPoint> Pvi;
 
   using namespace std;
   random_device dev;
-  uniform_real_distribution<double> un(0.95,1.1);
+  uniform_real_distribution<double> un(0.67,0.685);
   uniform_real_distribution<double> vi(400,450);
   uniform_real_distribution<double> re(620,700);
   uniform_real_distribution<double> ye(580,620);
   uniform_real_distribution<double> gr(550,580);
   uniform_real_distribution<double> bl(450,550);
   
-  uniform_real_distribution<double> the(-0.5,0.5);
+  uniform_real_distribution<double> the(-0.7,0.7);
  
   
   using namespace Genfun; 
@@ -127,9 +127,9 @@ std::vector<PPoint> Pvi;
 
 
 
-  int num=2000;
+  int num=1500;
   for(int i = 0;i<=num;i++){
-    double x1=un(dev);
+    double x1=asin(un(dev));
     double y1=re(dev);
     double y2=ye(dev);
     double y3=gr(dev);

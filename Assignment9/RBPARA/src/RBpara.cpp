@@ -34,14 +34,14 @@ void rainbow(int seed, Hist1D *result, double y)
 {
   
   std::mt19937 engine(seed);
-  std::uniform_real_distribution<double> un(0,1.5708);
+  std::uniform_real_distribution<double> un(0,1);
   std::exponential_distribution<double> ex(1/log(2));
   int nbin=200;
   int num =6000000;
   double range = 1.5708;
   Hist1D his(nbin,0,range);
   for (int i=1;i<num;i++){
-  double x = un(engine);
+  double x = asin(un(engine));
 
   double n =ceil(ex(engine));
 

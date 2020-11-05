@@ -46,7 +46,7 @@ std::vector<PPoint> disp={{400,1.339},{450,1.337},{500,1.335},{550,1.333},{600,1
   using namespace Genfun;
   random_device dev;
   random_device dev2;
-  uniform_real_distribution<double> un(0,1.5708);
+  uniform_real_distribution<double> un(0,1);
   exponential_distribution<double> ex(3);
   //Here we set k_bT=1,m=2
   int nbin=100;
@@ -57,7 +57,7 @@ std::vector<PPoint> disp={{400,1.339},{450,1.337},{500,1.335},{550,1.333},{600,1
   Hist1D his3(nbin,0,range);
   Hist1D his4(nbin,0,range);
   for (int i=0;i<=num;i++){
-    double x = un(dev);
+    double x = asin(un(dev));
     his.accumulate(4*asin(sin(x)/disp[0].y)-2*x,1./(num*range)*nbin);
    his2.accumulate(4*asin(sin(x)/disp[2].y)-2*x,1./(num*range)*nbin);
    his3.accumulate(4*asin(sin(x)/disp[4].y)-2*x,1./(num*range)*nbin);
