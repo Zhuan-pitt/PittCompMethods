@@ -20,7 +20,7 @@
 #include <QGraphicsPixmapItem>
 #include <QAction>
 #include "QatPlotting/PlotPoint.h"
-
+#include "QatPlotting/PlotFunction1D.h"
 
 int main (int argc, char **argv) {
 struct PPoint
